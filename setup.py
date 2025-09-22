@@ -4,7 +4,7 @@ setup(
     name='Mint_NM',
     version='0.1.0',
     description='A Jupyter widgets for solving',
-    url='https://github.com/mwelland/ENGPHYS_3NM4/Mint_NM',
+    url='https://github.com/mwelland/themintlab/Mint_NM',
     author='Joel',
     packages=['Mint_NM'],
     install_requires=[
