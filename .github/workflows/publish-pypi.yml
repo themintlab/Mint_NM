@@ -1,8 +1,8 @@
-name: Upload Python Package to TestPyPI
+name: Upload Python Package to PyPI
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
 
 jobs:
   deploy:
@@ -28,9 +28,9 @@ jobs:
     - name: List built files
       run: ls -l dist/
 
-    - name: Publish to TestPyPI
+    - name: Publish to PyPI
       run: |
-        python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+        python -m twine upload dist/*
       env:
         TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.T_PYPI_API_TOKEN }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
