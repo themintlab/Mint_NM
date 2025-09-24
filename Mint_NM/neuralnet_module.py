@@ -10,9 +10,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from ipywidgets import VBox, HBox, Button, Text, Label, Output
 from IPython.display import display, clear_output
-np.random.seed(42)
 from ipywidgets import ToggleButtons
-X = np.linspace(0, 3, 50).reshape(1, -1)
 
 def init_weights():
     global W1, b1, W2, b2
@@ -20,9 +18,6 @@ def init_weights():
     b1 = np.random.randn(4,1) * 0.5
     W2 = np.random.randn(1,4) * 0.5
     b2 = np.random.randn(1,1) * 0.5
-
-init_weights()
-loss_history = []
 
 def tanh(x): return np.tanh(x)
 def tanh_derivative(x): return 1 - np.tanh(x)**2
@@ -51,9 +46,6 @@ def backward(X, y, Z1, A1, A2, lr=0.1):
     W1 -= lr * dW1
     b1 -= lr * db1
 
-output_plot = widgets.Output()
-output_table = widgets.Output()
-status_label = widgets.Label(value="Press 'Step' to begin training.")
 
 def plot_nn_diagram():
     layer_x = [0, 2, 4]
@@ -107,46 +99,7 @@ def plot_nn_diagram():
                       margin=dict(l=20, r=20, t=40, b=20))
     fig.show()
 
-import numpy as np
-import matplotlib.pyplot as plt
-import networkx as nx
-from ipywidgets import VBox, HBox, Button, Text, Label, Output
-from IPython.display import display, clear_output
 
-depth = 1
-width = 3
-activation = np.tanh
-activation_derivative = lambda x: 1 - np.tanh(x) ** 2
-
-X = np.linspace(0, 3, 50).reshape(-1, 1)
-X2 = np.linspace(0, 3.5, 50).reshape(-1, 1)
-true_function = None
-losses = []
-weights, biases = [], []
-weight_history, bias_history = [], []
-
-function_input = Text(value='exp(-x/2)*sin(2*pi*x)', description='f(x):')
-save_button = Button(description='Save Function', button_style='success')
-reset_button = Button(description='Reset Model', button_style='warning')
-status_label = Label()
-
-step_label = Label(value="Step:")
-step_1 = Button(description='1')
-step_10 = Button(description='10')
-step_100 = Button(description='100')
-step_1000 = Button(description='1000')
-step_10000 = Button(description='10000')
-
-depth_label = Label(value="Change Depth (layers):")
-depth_add = Button(description='+1')
-depth_sub = Button(description='-1')
-width_label = Label(value="Change Width (neurons):")
-width_add = Button(description='+1')
-width_sub = Button(description='-1')
-
-output_plot = Output()
-network_plot = Output(layout={"height": "500px", "overflow": "auto"})
-metrics_plot = Output()
 
 def init_model():
     global weights, biases, weight_history, bias_history
@@ -231,17 +184,6 @@ def change_width(d):
     width = max(1, width + d)
     reset_model()
 
-save_button.on_click(save_function)
-reset_button.on_click(reset_model)
-step_1.on_click(lambda b: step(1))
-step_10.on_click(lambda b: step(10))
-step_100.on_click(lambda b: step(100))
-step_1000.on_click(lambda b: step(1000))
-step_10000.on_click(lambda b: step(10000))
-depth_add.on_click(lambda b: change_depth(1))
-depth_sub.on_click(lambda b: change_depth(-1))
-width_add.on_click(lambda b: change_width(1))
-width_sub.on_click(lambda b: change_width(-1))
 
 def draw_network(activations):
     import matplotlib.cm as cm
@@ -331,14 +273,3 @@ def update_plots():
             nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
             plt.title("Neural Network Diagram")
             plt.show()
-
-top_controls = HBox([function_input, save_button, reset_button])
-step_controls = HBox([step_label, step_1, step_10, step_100, step_1000, step_10000])
-depth_controls = HBox([depth_label, depth_sub, depth_add])
-width_controls = HBox([width_label, width_sub, width_add])
-graph_row = HBox([output_plot, metrics_plot])
-full_ui = VBox([top_controls, status_label, step_controls, depth_controls, width_controls, network_plot, graph_row])
-display(full_ui)
-
-init_model()
-update_plots()
