@@ -231,7 +231,7 @@ def draw_network(activations):
     return G, pos, labels, edge_labels, edge_colors
 
 
-def update_plots(output_plot):
+def update_plots(output_plot, metrics_plot, network_plot):
     output_plot.clear_output(wait=True)
     metrics_plot.clear_output(wait=True)
     network_plot.clear_output(wait=True)
