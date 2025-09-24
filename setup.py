@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Mint_NM',
-    version='0.1.3',
+    version='0.1.4',
     description='A Jupyter widgets for solving',
     url='https://github.com/mwelland/themintlab/Mint_NM',
     author='Joel',
