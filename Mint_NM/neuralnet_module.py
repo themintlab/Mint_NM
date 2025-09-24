@@ -101,7 +101,7 @@ def plot_nn_diagram():
 
 
 
-def init_model():
+def init_model(depth=1, width=1):
     global weights, biases, weight_history, bias_history
     layers = [1] + [width]*depth + [1]
     weights = [np.random.randn(layers[i], layers[i+1]) * np.sqrt(2 / layers[i]) for i in range(len(layers)-1)]
