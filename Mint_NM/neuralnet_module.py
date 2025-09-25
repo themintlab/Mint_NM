@@ -148,7 +148,7 @@ def backward_pass(zs, activations, y_true, lr=0.01):
     return np.mean((activations[-1] - y_true)**2)
 
 def step(n=1):
-    global losses
+    global true_function, losses
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
@@ -158,6 +158,7 @@ def step(n=1):
     update_plots()
 
 def reset_model(_=None):
+    global losses
     init_model()
     losses.clear()
     status_label.value = "Model reset."
