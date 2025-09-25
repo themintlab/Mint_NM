@@ -148,7 +148,6 @@ def backward_pass(zs, activations, y_true, lr=0.01):
     return np.mean((activations[-1] - y_true)**2)
 
 def step(n=1,true_function=true_function, losses=losses):
-    global losses
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
@@ -164,7 +163,6 @@ def reset_model(_=None, losses=losses):
     update_plots()
 
 def save_function(_=None,true_function=true_function, losses=losses, function_input=function_input):
-    global true_function, losses
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
@@ -175,12 +173,10 @@ def save_function(_=None,true_function=true_function, losses=losses, function_in
         status_label.value = f"Error: {e}"
 
 def change_depth(d, depth=depth):
-    global depth
     depth = max(0, depth + d)
     reset_model()
 
 def change_width(d, width=width):
-    global width
     width = max(1, width + d)
     reset_model()
 
