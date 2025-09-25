@@ -156,13 +156,13 @@ def step(n=1,true_function, losses):
         losses.append(loss)
     update_plots()
 
-def reset_model(_=None, losses):
+def reset_model(losses, status_label):
     init_model()
     losses.clear()
     status_label.value = "Model reset."
     update_plots()
 
-def save_function(_=None,true_function, losses, function_input):
+def save_function(true_function, losses, function_input, status_label):
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
