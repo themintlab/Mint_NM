@@ -147,7 +147,7 @@ def backward_pass(zs, activations, y_true, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n=1,true_function, losses):
+def step(n,true_function, losses):
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
