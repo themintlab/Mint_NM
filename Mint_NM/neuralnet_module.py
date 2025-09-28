@@ -174,9 +174,9 @@ def save_function(output_plot, metrics_plot, network_plot, true_function, losses
 
 def change_depth(d, depth, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, status_label):
     depth = max(0, depth + d)
-    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, depth, status_label)
+    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label)
 
-def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label):
+def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, depth, status_label):
     width = max(1, width + d)
     reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label)
 
