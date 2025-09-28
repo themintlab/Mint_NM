@@ -156,29 +156,29 @@ def step(n,true_function, losses):
         losses.append(loss)
     update_plots()
 
-def reset_model(losses, status_label):
+def reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
     init_model()
     losses.clear()
     status_label.value = "Model reset."
-    update_plots()
+    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history)
 
-def save_function(true_function, losses, function_input, status_label):
+def save_function(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, function_input, status_label):
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
         losses.clear()
         status_label.value = "Function saved."
-        update_plots()
+        update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history)
     except Exception as e:
         status_label.value = f"Error: {e}"
 
-def change_depth(d, depth):
+def change_depth(d, depth, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
     depth = max(0, depth + d)
-    reset_model()
+    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label)
 
-def change_width(d, width):
+def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
     width = max(1, width + d)
-    reset_model()
+    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label)
 
 
 def draw_network(activations):
