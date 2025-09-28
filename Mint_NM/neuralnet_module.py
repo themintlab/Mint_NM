@@ -12,6 +12,35 @@ from ipywidgets import VBox, HBox, Button, Text, Label, Output
 from IPython.display import display, clear_output
 from ipywidgets import ToggleButtons
 
+np.random.seed(42)
+
+X = np.linspace(0, 3, 50).reshape(1, -1)
+
+init_weights()
+loss_history = []
+
+output_plot = widgets.Output()
+output_table = widgets.Output()
+status_label = widgets.Label(value="Press 'Step' to begin training.")
+
+depth = 1
+width = 3
+activation = np.tanh
+activation_derivative = lambda x: 1 - np.tanh(x) ** 2
+
+X = np.linspace(0, 3, 50).reshape(-1, 1)
+X2 = np.linspace(0, 3.5, 50).reshape(-1, 1)
+true_function = None
+losses = []
+weights, biases = [], []
+weight_history, bias_history = [], []
+
+function_input = Text(value='exp(-x/2)*sin(2*pi*x)', description='f(x):')
+status_label = Label()
+output_plot = Output()
+network_plot = Output(layout={"height": "500px", "overflow": "auto"})
+metrics_plot = Output()
+
 def init_weights():
     global W1, b1, W2, b2
     W1 = np.random.randn(4,1) * 0.5
@@ -101,7 +130,7 @@ def plot_nn_diagram():
 
 
 
-def init_model(depth=1, width=1):
+def init_model():
     global weights, biases, weight_history, bias_history
     layers = [1] + [width]*depth + [1]
     weights = [np.random.randn(layers[i], layers[i+1]) * np.sqrt(2 / layers[i]) for i in range(len(layers)-1)]
@@ -109,7 +138,7 @@ def init_model(depth=1, width=1):
     weight_history = [[] for _ in weights]
     bias_history = [[] for _ in biases]
 
-def forward_pass(x, activation):
+def forward_pass(x):
     activations = [x]
     zs = []
     a = x
@@ -123,7 +152,7 @@ def forward_pass(x, activation):
     activations.append(z)  # no activation on final output
     return zs, activations
 
-def backward_pass(zs, activations, activation_derivative, y_true, X, lr=0.01):
+def backward_pass(zs, activations, y_true, lr=0.01):
     global weights, biases, weight_history, bias_history
     grads_w = [None] * len(weights)
     grads_b = [None] * len(biases)
@@ -147,41 +176,45 @@ def backward_pass(zs, activations, activation_derivative, y_true, X, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n,output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, activation_derivative, width, depth):
+def step(n=1):
+    global losses
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
-        zs, activations = forward_pass(X, activation)
-        loss = backward_pass(zs, activations, activation_derivative, y_true, X)
+        zs, activations = forward_pass(X)
+        loss = backward_pass(zs, activations, y_true)
         losses.append(loss)
-    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth)
+    update_plots()
 
-def reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label):
+def reset_model(_=None):
     init_model()
     losses.clear()
     status_label.value = "Model reset."
-    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth)
+    update_plots()
 
-def save_function(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, function_input, status_label):
+def save_function(_=None):
+    global true_function, losses
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
         losses.clear()
         status_label.value = "Function saved."
-        update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth)
+        update_plots()
     except Exception as e:
         status_label.value = f"Error: {e}"
 
-def change_depth(d, depth, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, status_label):
+def change_depth(d):
+    global depth
     depth = max(0, depth + d)
-    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label)
+    reset_model()
 
-def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, depth, status_label):
+def change_width(d):
+    global width
     width = max(1, width + d)
-    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth, status_label)
+    reset_model()
 
 
-def draw_network(activations, width, depth):
+def draw_network(activations):
     import matplotlib.cm as cm
     import matplotlib.colors as mcolors
 
@@ -227,7 +260,7 @@ def draw_network(activations, width, depth):
     return G, pos, labels, edge_labels, edge_colors
 
 
-def update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, width, depth):
+def update_plots():
     output_plot.clear_output(wait=True)
     metrics_plot.clear_output(wait=True)
     network_plot.clear_output(wait=True)
@@ -235,7 +268,7 @@ def update_plots(output_plot, metrics_plot, network_plot, true_function, losses,
         if true_function:
             plt.figure(figsize=(6, 3))
             y_true = true_function(X)
-            _, activations = forward_pass(X2, activation)
+            _, activations = forward_pass(X2)
             y_pred = activations[-1]
             plt.plot(X, y_true, label='True')
             plt.scatter(X2, y_pred, label='NN')
@@ -261,8 +294,8 @@ def update_plots(output_plot, metrics_plot, network_plot, true_function, losses,
             plt.show()
     with network_plot:
         if true_function:
-            activations = forward_pass(X, activation)  # Ensure activations are defined
-            G, pos, labels, edge_labels, edge_colors = draw_network(activations, width, depth)
+            activations = forward_pass(X)  # Ensure activations are defined
+            G, pos, labels, edge_labels, edge_colors = draw_network(activations)
             edge_color_vals = [edge_colors.get(edge, '#888888') for edge in G.edges()]
             nx.draw(G, pos, labels=labels, node_color='lightblue', node_size=600,
                     edge_color=edge_color_vals, edge_cmap=plt.cm.bwr, arrows=True)
