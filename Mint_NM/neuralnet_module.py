@@ -12,6 +12,16 @@ from ipywidgets import VBox, HBox, Button, Text, Label, Output
 from IPython.display import display, clear_output
 from ipywidgets import ToggleButtons
 
+def init_weights():
+    global W1, b1, W2, b2
+    W1 = np.random.randn(4,1) * 0.5
+    b1 = np.random.randn(4,1) * 0.5
+    W2 = np.random.randn(1,4) * 0.5
+    b2 = np.random.randn(1,1) * 0.5
+
+def tanh(x): return np.tanh(x)
+def tanh_derivative(x): return 1 - np.tanh(x)**2
+
 np.random.seed(42)
 
 X = np.linspace(0, 3, 50).reshape(1, -1)
@@ -40,16 +50,6 @@ status_label = Label()
 output_plot = Output()
 network_plot = Output(layout={"height": "500px", "overflow": "auto"})
 metrics_plot = Output()
-
-def init_weights():
-    global W1, b1, W2, b2
-    W1 = np.random.randn(4,1) * 0.5
-    b1 = np.random.randn(4,1) * 0.5
-    W2 = np.random.randn(1,4) * 0.5
-    b2 = np.random.randn(1,1) * 0.5
-
-def tanh(x): return np.tanh(x)
-def tanh_derivative(x): return 1 - np.tanh(x)**2
 
 def forward(X):
     Z1 = W1 @ X + b1
