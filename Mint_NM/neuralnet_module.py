@@ -166,7 +166,7 @@ def backward_pass(zs, activations, y_true, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n=1,output_plot, metrics_plot, network_plot):
+def step(n,output_plot, metrics_plot, network_plot):
     global losses
     if true_function is None: return
     y_true = true_function(X)
