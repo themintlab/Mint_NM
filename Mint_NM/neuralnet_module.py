@@ -123,7 +123,7 @@ def forward_pass(x):
     activations.append(z)  # no activation on final output
     return zs, activations
 
-def backward_pass(zs, activations, y_true, lr=0.01):
+def backward_pass(zs, activations, y_true, X, lr=0.01):
     global weights, biases, weight_history, bias_history
     grads_w = [None] * len(weights)
     grads_b = [None] * len(biases)
@@ -147,38 +147,38 @@ def backward_pass(zs, activations, y_true, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n,output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history):
+def step(n,output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2):
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
         zs, activations = forward_pass(X)
         loss = backward_pass(zs, activations, y_true)
         losses.append(loss)
-    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history)
+    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2)
 
-def reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
+def reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, status_label):
     init_model()
     losses.clear()
     status_label.value = "Model reset."
-    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history)
+    update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2)
 
-def save_function(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, function_input, status_label):
+def save_function(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, function_input, status_label):
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
         losses.clear()
         status_label.value = "Function saved."
-        update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history)
+        update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2)
     except Exception as e:
         status_label.value = f"Error: {e}"
 
-def change_depth(d, depth, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
+def change_depth(d, depth, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, status_label):
     depth = max(0, depth + d)
-    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label)
+    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, status_label)
 
-def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label):
+def change_width(d, width, output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, status_label):
     width = max(1, width + d)
-    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, status_label)
+    reset_model(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, status_label)
 
 
 def draw_network(activations):
@@ -227,7 +227,7 @@ def draw_network(activations):
     return G, pos, labels, edge_labels, edge_colors
 
 
-def update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history):
+def update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2):
     output_plot.clear_output(wait=True)
     metrics_plot.clear_output(wait=True)
     network_plot.clear_output(wait=True)
