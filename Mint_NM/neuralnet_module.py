@@ -29,10 +29,6 @@ X = np.linspace(0, 3, 50).reshape(1, -1)
 init_weights()
 loss_history = []
 
-output_plot = widgets.Output()
-output_table = widgets.Output()
-status_label = widgets.Label(value="Press 'Step' to begin training.")
-
 depth = 1
 width = 3
 activation = np.tanh
@@ -44,12 +40,6 @@ true_function = None
 losses = []
 weights, biases = [], []
 weight_history, bias_history = [], []
-
-function_input = Text(value='exp(-x/2)*sin(2*pi*x)', description='f(x):')
-status_label = Label()
-output_plot = Output()
-network_plot = Output(layout={"height": "500px", "overflow": "auto"})
-metrics_plot = Output()
 
 def forward(X):
     Z1 = W1 @ X + b1
@@ -176,7 +166,7 @@ def backward_pass(zs, activations, y_true, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n=1):
+def step(n=1,output_plot, metrics_plot, network_plot):
     global losses
     if true_function is None: return
     y_true = true_function(X)
@@ -184,34 +174,34 @@ def step(n=1):
         zs, activations = forward_pass(X)
         loss = backward_pass(zs, activations, y_true)
         losses.append(loss)
-    update_plots()
+    update_plots(output_plot, metrics_plot, network_plot)
 
-def reset_model(_=None):
+def reset_model(output_plot, metrics_plot, network_plot, status_label):
     init_model()
     losses.clear()
     status_label.value = "Model reset."
-    update_plots()
+    update_plots(output_plot, metrics_plot, network_plot)
 
-def save_function(_=None):
+def save_function(function_input, output_plot, metrics_plot, network_plot, status_label):
     global true_function, losses
     try:
         code = function_input.value
         true_function = lambda x: eval(code, {"x": x, "np": np, "sin": np.sin, "cos": np.cos, "exp": np.exp, "pi": np.pi})
         losses.clear()
         status_label.value = "Function saved."
-        update_plots()
+        update_plots(output_plot, metrics_plot, network_plot)
     except Exception as e:
         status_label.value = f"Error: {e}"
 
-def change_depth(d):
+def change_depth(d, output_plot, metrics_plot, network_plot):
     global depth
     depth = max(0, depth + d)
-    reset_model()
+    reset_model(output_plot, metrics_plot, network_plot)
 
-def change_width(d):
+def change_width(d, output_plot, metrics_plot, network_plot):
     global width
     width = max(1, width + d)
-    reset_model()
+    reset_model(output_plot, metrics_plot, network_plot)
 
 
 def draw_network(activations):
@@ -260,7 +250,7 @@ def draw_network(activations):
     return G, pos, labels, edge_labels, edge_colors
 
 
-def update_plots():
+def update_plots(output_plot, metrics_plot, network_plot):
     output_plot.clear_output(wait=True)
     metrics_plot.clear_output(wait=True)
     network_plot.clear_output(wait=True)
