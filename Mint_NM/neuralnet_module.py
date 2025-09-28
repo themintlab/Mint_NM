@@ -109,7 +109,7 @@ def init_model(depth=1, width=1):
     weight_history = [[] for _ in weights]
     bias_history = [[] for _ in biases]
 
-def forward_pass(x):
+def forward_pass(x, activation):
     activations = [x]
     zs = []
     a = x
@@ -123,7 +123,7 @@ def forward_pass(x):
     activations.append(z)  # no activation on final output
     return zs, activations
 
-def backward_pass(zs, activations, y_true, X, lr=0.01):
+def backward_pass(zs, activations, activation_derivative, y_true, X, lr=0.01):
     global weights, biases, weight_history, bias_history
     grads_w = [None] * len(weights)
     grads_b = [None] * len(biases)
@@ -147,12 +147,12 @@ def backward_pass(zs, activations, y_true, X, lr=0.01):
 
     return np.mean((activations[-1] - y_true)**2)
 
-def step(n,output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2):
+def step(n,output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2, activation, activation_derivative):
     if true_function is None: return
     y_true = true_function(X)
     for _ in range(n):
-        zs, activations = forward_pass(X)
-        loss = backward_pass(zs, activations, y_true)
+        zs, activations = forward_pass(X, activation)
+        loss = backward_pass(zs, activations, activation_derivative, y_true, X)
         losses.append(loss)
     update_plots(output_plot, metrics_plot, network_plot, true_function, losses, weight_history, bias_history, X, X2)
 
