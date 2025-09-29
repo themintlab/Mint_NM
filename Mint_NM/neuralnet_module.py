@@ -193,15 +193,15 @@ def save_function(function_input, output_plot, metrics_plot, network_plot, statu
     except Exception as e:
         status_label.value = f"Error: {e}"
 
-def change_depth(d, output_plot, metrics_plot, network_plot):
+def change_depth(d, output_plot, metrics_plot, network_plot, status_label):
     global depth
     depth = max(0, depth + d)
-    reset_model(output_plot, metrics_plot, network_plot)
+    reset_model(output_plot, metrics_plot, network_plot, status_label)
 
-def change_width(d, output_plot, metrics_plot, network_plot):
+def change_width(d, output_plot, metrics_plot, network_plot, status_label):
     global width
     width = max(1, width + d)
-    reset_model(output_plot, metrics_plot, network_plot)
+    reset_model(output_plot, metrics_plot, network_plot, status_label)
 
 
 def draw_network(activations):
