@@ -3,7 +3,6 @@ import numpy as np
 import plotly.graph_objs as go
 import ipywidgets as widgets
 from IPython.display import display, clear_output
-import pandas as pd
 from math import *
 import numpy as np
 import matplotlib.pyplot as plt
