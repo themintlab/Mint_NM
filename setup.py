@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Mint_NM',
-    version='0.1.28',
+    version='0.1.29',
     description='Tools for ENGPHYS 3NM4',
     url='https://github.com/mwelland/themintlab/Mint_NM',
     author='Michael Welland',
